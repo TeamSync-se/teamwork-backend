@@ -24,3 +24,6 @@ hs_err_pid*
 replay_pid*
 # Maven build output
 target/
+
+# Khoa bi mat (NFR-04): khong bao gio commit
+.env
