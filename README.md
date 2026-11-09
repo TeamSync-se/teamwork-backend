@@ -1,6 +1,8 @@
 # teamwork-backend
 Backend for Online Team Collaboration System – Software Engineering Project
 
+> **Thành viên mới:** đọc [docs/huong-dan-dong-gop.md](docs/huong-dan-dong-gop.md) trước khi làm issue đầu tiên. File đó thống nhất quy trình làm việc, quy ước code và cách dùng AI cho cả nhóm.
+
 ## Yêu cầu
 - JDK 21
 - Docker Desktop

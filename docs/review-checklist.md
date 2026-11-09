@@ -37,7 +37,7 @@ Thiếu một trong các mục trên thì trả PR lại cho người mở, chư
 
 ## 4. Cơ sở dữ liệu
 
-- [ ] Thay đổi CSDL bằng file migration mới `V<số>__<mô_tả>.sql`
+- [ ] Thay đổi CSDL bằng file migration mới, đặt tên theo quy ước ở mục 4 của [huong-dan-dong-gop.md](huong-dan-dong-gop.md)
 - [ ] **Không sửa** file migration đã merge vào `main`
 - [ ] Tên bảng, cột khớp ERD; có khóa ngoại và ràng buộc cần thiết
 - [ ] Thao tác ghi nhiều bảng nằm trong cùng một giao dịch
@@ -49,7 +49,8 @@ Thiếu một trong các mục trên thì trả PR lại cho người mở, chư
 
 ## 6. Mã nguồn
 
-- [ ] Code đặt đúng package theo phân hệ
+- [ ] Code đặt đúng package, nhánh và commit đúng quy ước ở mục 4 của [huong-dan-dong-gop.md](huong-dan-dong-gop.md)
+- [ ] Code do AI viết đã được người mở PR đọc và giải thích được
 - [ ] Không còn code thừa, log debug hay `TODO` không gắn issue
 - [ ] Tên lớp, hàm, biến rõ nghĩa
 
