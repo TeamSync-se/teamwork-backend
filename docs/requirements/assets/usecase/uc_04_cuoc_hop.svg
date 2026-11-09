@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 440" width="980" height="440">
+  <rect x="0" y="0" width="980" height="440" fill="#ffffff"/>
+  <g class="system-boundary">
+    <rect x="248" y="32" width="480" height="380" rx="10" ry="10" fill="#1b3d36" fill-opacity="0.06"/>
+    <rect x="245" y="28" width="480" height="380" rx="10" ry="10" fill="#fbfdfc" stroke="#1b3d36" stroke-width="2"/>
+    <path d="M 245 76 L 245 38 Q 245 28 255 28 L 715 28 Q 725 28 725 38 L 725 76 Z" fill="#e4efe9"/>
+    <line x1="245" y1="76" x2="725" y2="76" stroke="#1b3d36" stroke-width="1.6"/>
+    <text x="485.0" y="45" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-style="italic" fill="#2f6f62" text-anchor="middle">«system»</text>
+    <text x="485.0" y="65" font-family="'Segoe UI', Arial, sans-serif" font-size="15" font-weight="700" fill="#1b3d36" text-anchor="middle">Phân hệ 4: Tổ chức và quản lý cuộc họp</text>
+  </g>
+  <g class="generalization">
+    <line x1="115.0" y1="258.0" x2="115.0" y2="204.5" stroke="#1b3d36" stroke-width="1.7" stroke-linecap="round"/>
+    <polygon points="115.0,193.0 120.2,204.5 109.8,204.5" fill="#ffffff" stroke="#1b3d36" stroke-width="1.7" stroke-linejoin="round"/>
+  </g>
+  <line x1="133.0" y1="136.7" x2="355.0" y2="136.1" stroke="#2f4f46" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="133.0" y1="287.4" x2="359.7" y2="244.3" stroke="#2f4f46" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="133.0" y1="295.4" x2="371.7" y2="333.5" stroke="#2f4f46" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="847.0" y1="278.2" x2="611.3" y2="243.1" stroke="#8c4e2a" stroke-width="1.45" stroke-linecap="round"/>
+  <line x1="847.0" y1="286.2" x2="597.7" y2="332.8" stroke="#8c4e2a" stroke-width="1.45" stroke-linecap="round"/>
+  <g class="usecase">
+    <ellipse cx="487" cy="138.5" rx="130" ry="26" fill="#1b3d36" fill-opacity="0.07"/>
+    <ellipse cx="485" cy="136" rx="130" ry="26" fill="#ffffff" stroke="#1b3d36" stroke-width="1.75"/>
+    <text x="485" y="140.5" font-family="'Segoe UI', Arial, sans-serif" font-size="12.2" font-weight="600" fill="#1c1915" text-anchor="middle">UC14: Bình chọn thời gian họp</text>
+  </g>
+  <g class="usecase">
+    <ellipse cx="487" cy="240.5" rx="128" ry="31" fill="#1b3d36" fill-opacity="0.07"/>
+    <ellipse cx="485" cy="238" rx="128" ry="31" fill="#ffffff" stroke="#1b3d36" stroke-width="1.75"/>
+    <text x="485" y="234.5" font-family="'Segoe UI', Arial, sans-serif" font-size="12.2" font-weight="600" fill="#1c1915" text-anchor="middle">UC13: Tạo cuộc họp &amp;</text>
+    <text x="485" y="251.5" font-family="'Segoe UI', Arial, sans-serif" font-size="12.2" font-weight="600" fill="#1c1915" text-anchor="middle">đề xuất khung giờ</text>
+  </g>
+  <g class="usecase">
+    <ellipse cx="487" cy="340.5" rx="115" ry="26" fill="#1b3d36" fill-opacity="0.07"/>
+    <ellipse cx="485" cy="338" rx="115" ry="26" fill="#ffffff" stroke="#1b3d36" stroke-width="1.75"/>
+    <text x="485" y="342.5" font-family="'Segoe UI', Arial, sans-serif" font-size="12.2" font-weight="600" fill="#1c1915" text-anchor="middle">UC15: Chốt lịch họp</text>
+  </g>
+  <g class="actor">
+    <circle cx="115" cy="118" r="9.5" fill="#ffffff" stroke="#1b3d36" stroke-width="2"/>
+    <line x1="115" y1="127.5" x2="115" y2="148" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <line x1="101" y1="135" x2="129" y2="135" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <line x1="115" y1="148" x2="103" y2="166" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <line x1="115" y1="148" x2="127" y2="166" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <text x="115" y="182" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1c1915" text-anchor="middle">Thành viên nhóm</text>
+  </g>
+  <g class="actor">
+    <circle cx="115" cy="273" r="9.5" fill="#ffffff" stroke="#1b3d36" stroke-width="2"/>
+    <line x1="115" y1="282.5" x2="115" y2="303" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <line x1="101" y1="290" x2="129" y2="290" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <line x1="115" y1="303" x2="103" y2="321" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <line x1="115" y1="303" x2="127" y2="321" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <text x="115" y="337" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1c1915" text-anchor="middle">Người tổ chức</text>
+    <text x="115" y="353" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1c1915" text-anchor="middle">cuộc họp</text>
+  </g>
+  <g class="actor">
+    <circle cx="865" cy="263" r="9.5" fill="#fdf3eb" stroke="#8c4e2a" stroke-width="2"/>
+    <line x1="865" y1="272.5" x2="865" y2="293" stroke="#8c4e2a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="851" y1="280" x2="879" y2="280" stroke="#8c4e2a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="865" y1="293" x2="853" y2="311" stroke="#8c4e2a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="865" y1="293" x2="877" y2="311" stroke="#8c4e2a" stroke-width="2" stroke-linecap="round"/>
+    <text x="865" y="327" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-style="italic" fill="#8c4e2a" text-anchor="middle">«system»</text>
+    <text x="865" y="343" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1c1915" text-anchor="middle">Dịch vụ Email /</text>
+    <text x="865" y="359" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1c1915" text-anchor="middle">Thông báo</text>
+  </g>
+</svg>

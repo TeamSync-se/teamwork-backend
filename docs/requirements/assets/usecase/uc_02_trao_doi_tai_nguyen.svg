@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 470" width="980" height="470">
+  <rect x="0" y="0" width="980" height="470" fill="#ffffff"/>
+  <g class="system-boundary">
+    <rect x="238" y="32" width="515" height="412" rx="10" ry="10" fill="#1b3d36" fill-opacity="0.06"/>
+    <rect x="235" y="28" width="515" height="412" rx="10" ry="10" fill="#fbfdfc" stroke="#1b3d36" stroke-width="2"/>
+    <path d="M 235 76 L 235 38 Q 235 28 245 28 L 740 28 Q 750 28 750 38 L 750 76 Z" fill="#e4efe9"/>
+    <line x1="235" y1="76" x2="750" y2="76" stroke="#1b3d36" stroke-width="1.6"/>
+    <text x="492.5" y="45" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-style="italic" fill="#2f6f62" text-anchor="middle">«system»</text>
+    <text x="492.5" y="65" font-family="'Segoe UI', Arial, sans-serif" font-size="15" font-weight="700" fill="#1b3d36" text-anchor="middle">Phân hệ 2: Trao đổi thông tin và quản lý tài nguyên</text>
+  </g>
+  <line x1="128.0" y1="241.8" x2="328.0" y2="138.3" stroke="#2f4f46" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="128.0" y1="248.6" x2="320.0" y2="216.6" stroke="#2f4f46" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="128.0" y1="255.4" x2="314.8" y2="292.6" stroke="#2f4f46" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="128.0" y1="262.3" x2="326.9" y2="373.4" stroke="#2f4f46" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="857.0" y1="377.3" x2="564.0" y2="383.4" stroke="#8c4e2a" stroke-width="1.45" stroke-linecap="round"/>
+  <g class="extend-rel">
+    <path d="M 567.5 295.8 C 641.5 289.8, 641.5 220.2, 561.6 214.2" fill="none" stroke="#1b3d36" stroke-width="1.5" stroke-dasharray="5,4" stroke-linecap="round"/>
+    <polyline points="570.4,210.3 561.6,214.2 569.7,219.4" fill="none" stroke="#1b3d36" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="extend-rel">
+    <path d="M 563.6 381.8 C 641.5 375.8, 641.5 306.2, 567.5 300.2" fill="none" stroke="#1b3d36" stroke-width="1.5" stroke-dasharray="5,4" stroke-linecap="round"/>
+    <polyline points="576.4,296.3 567.5,300.2 575.6,305.5" fill="none" stroke="#1b3d36" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="usecase">
+    <ellipse cx="442" cy="130.5" rx="122" ry="26" fill="#1b3d36" fill-opacity="0.07"/>
+    <ellipse cx="440" cy="128" rx="122" ry="26" fill="#ffffff" stroke="#1b3d36" stroke-width="1.75"/>
+    <text x="440" y="132.5" font-family="'Segoe UI', Arial, sans-serif" font-size="12.2" font-weight="600" fill="#1c1915" text-anchor="middle">UC06: Gửi tin nhắn nhóm</text>
+  </g>
+  <g class="usecase">
+    <ellipse cx="442" cy="214.5" rx="122" ry="26" fill="#1b3d36" fill-opacity="0.07"/>
+    <ellipse cx="440" cy="212" rx="122" ry="26" fill="#ffffff" stroke="#1b3d36" stroke-width="1.75"/>
+    <text x="440" y="216.5" font-family="'Segoe UI', Arial, sans-serif" font-size="12.2" font-weight="600" fill="#1c1915" text-anchor="middle">UC07: Chia sẻ tài nguyên</text>
+  </g>
+  <g class="usecase">
+    <ellipse cx="442" cy="300.5" rx="128" ry="26" fill="#1b3d36" fill-opacity="0.07"/>
+    <ellipse cx="440" cy="298" rx="128" ry="26" fill="#ffffff" stroke="#1b3d36" stroke-width="1.75"/>
+    <text x="440" y="302.5" font-family="'Segoe UI', Arial, sans-serif" font-size="12.2" font-weight="600" fill="#1c1915" text-anchor="middle">UC08: Thảo luận theo thread</text>
+  </g>
+  <g class="usecase">
+    <ellipse cx="442" cy="386.5" rx="124" ry="26" fill="#1b3d36" fill-opacity="0.07"/>
+    <ellipse cx="440" cy="384" rx="124" ry="26" fill="#ffffff" stroke="#1b3d36" stroke-width="1.75"/>
+    <text x="440" y="388.5" font-family="'Segoe UI', Arial, sans-serif" font-size="12.2" font-weight="600" fill="#1c1915" text-anchor="middle">UC09: AI tóm tắt trao đổi</text>
+  </g>
+  <g class="actor">
+    <circle cx="110" cy="233" r="9.5" fill="#ffffff" stroke="#1b3d36" stroke-width="2"/>
+    <line x1="110" y1="242.5" x2="110" y2="263" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <line x1="96" y1="250" x2="124" y2="250" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <line x1="110" y1="263" x2="98" y2="281" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <line x1="110" y1="263" x2="122" y2="281" stroke="#1b3d36" stroke-width="2" stroke-linecap="round"/>
+    <text x="110" y="297" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1c1915" text-anchor="middle">Thành viên nhóm</text>
+  </g>
+  <g class="actor">
+    <circle cx="875" cy="358" r="9.5" fill="#fdf3eb" stroke="#8c4e2a" stroke-width="2"/>
+    <line x1="875" y1="367.5" x2="875" y2="388" stroke="#8c4e2a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="861" y1="375" x2="889" y2="375" stroke="#8c4e2a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="875" y1="388" x2="863" y2="406" stroke="#8c4e2a" stroke-width="2" stroke-linecap="round"/>
+    <line x1="875" y1="388" x2="887" y2="406" stroke="#8c4e2a" stroke-width="2" stroke-linecap="round"/>
+    <text x="875" y="422" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-style="italic" fill="#8c4e2a" text-anchor="middle">«system»</text>
+    <text x="875" y="438" font-family="'Segoe UI', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#1c1915" text-anchor="middle">Dịch vụ AI</text>
+  </g>
+  <g class="stereo-badge">
+    <rect x="590.3" y="245.0" width="64" height="20" rx="10" ry="10" fill="#ffffff" stroke="#8aa69e" stroke-width="1.1"/>
+    <text x="622.3" y="258.8" font-family="'Segoe UI', Arial, sans-serif" font-size="11.2" font-style="italic" fill="#1b3d36" text-anchor="middle">«extend»</text>
+  </g>
+  <g class="stereo-badge">
+    <rect x="590.5" y="331.0" width="64" height="20" rx="10" ry="10" fill="#ffffff" stroke="#8aa69e" stroke-width="1.1"/>
+    <text x="622.5" y="344.8" font-family="'Segoe UI', Arial, sans-serif" font-size="11.2" font-style="italic" fill="#1b3d36" text-anchor="middle">«extend»</text>
+  </g>
+</svg>

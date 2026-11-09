@@ -1,0 +1,30 @@
+flowchart LR
+    U0["Người dùng chưa có tài khoản"]
+    TV["Thành viên nhóm"]
+    TN["Trưởng nhóm"]
+    TC["Người tổ chức cuộc họp"]
+    DEV["Nhóm phát triển và vận hành"]
+    GV["Giảng viên / Bộ môn"]
+
+    SYS(("Hệ thống hỗ trợ làm việc nhóm trực tuyến"))
+
+    AI["AI Service"]
+    EM["Email Service"]
+    NT["Notification Service"]
+    MT["Nền tảng họp trực tuyến"]
+    ST["File Storage Service"]
+
+    U0 -- "đăng ký, nhận lời mời" --> SYS
+    TV -- "nhắn tin, tài nguyên, thread, task, bình chọn" --> SYS
+    TN -- "quản lý nhóm, thành viên, phân quyền, giao việc" --> SYS
+    TC -- "tạo cuộc họp, đề xuất và chốt giờ" --> SYS
+    SYS -- "dashboard, thông báo, lịch họp" --> TV
+    DEV -- "triển khai, bảo trì, giám sát" --> SYS
+    GV -- "đánh giá, nghiệm thu" --> SYS
+    SYS -- "nội dung cần tóm tắt" --> AI
+    AI -- "bản tóm tắt" --> SYS
+    SYS -- "email lời mời, nhiệm vụ, lịch họp" --> EM
+    SYS -- "thông báo trình duyệt/thiết bị" --> NT
+    SYS -- "lưu và hiển thị liên kết họp" --> MT
+    SYS -- "tải lên, tải xuống tệp" --> ST
+    ST -- "mã tham chiếu tệp" --> SYS
