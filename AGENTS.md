@@ -6,7 +6,7 @@ Trước khi viết code cho một issue, **bắt buộc** đọc:
 1. Chính issue đó (Phụ thuộc, Description, Acceptance Criteria, Solution).
 2. `docs/huong-dan-dong-gop.md`: quy trình làm issue, quy ước code, những gì AI không được làm.
 3. `docs/review-checklist.md`: những gì người review sẽ kiểm tra.
-4. Use Case và prototype ghi trong issue, trong `docs/requirements/PA02.md`.
+4. Chỉ phần Use Case và prototype được ghi trong issue (ví dụ UC01, màn hình 1.2) trong `docs/requirements/PA02.md`; không đọc toàn bộ PA02.
 
 Quy tắc không được vi phạm:
 - Không bắt đầu viết code khi issue còn nhãn `chua-co-AC`.

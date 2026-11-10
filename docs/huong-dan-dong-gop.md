@@ -15,7 +15,7 @@ File này thống nhất cách cả nhóm làm việc, kể cả khi code do AI 
 |---|---|
 | Mỗi lần làm issue | Chính issue đó (Phụ thuộc, Description, Acceptance Criteria, Solution) |
 | Mỗi lần làm issue | File này và [review-checklist.md](review-checklist.md) |
-| Mỗi lần làm issue | Use Case và màn hình prototype ghi trong issue ([PA02.md](requirements/PA02.md)) |
+| Mỗi lần làm issue | Chỉ phần Use Case và màn hình prototype ghi trong issue ([PA02.md](requirements/PA02.md)), không đọc toàn bộ file |
 | Lần đầu tham gia | [README.md](../README.md), các quy định QĐ01 đến QĐ09 ([PA01.md](requirements/PA01.md)), mục 2.5 và 3.2.2 của PA02 |
 | Khi đã có | `docs/api/conventions.md`, hợp đồng API của phân hệ, ERD, hướng dẫn kiểm tra quyền nhóm |
 
