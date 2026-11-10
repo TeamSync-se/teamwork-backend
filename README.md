@@ -1,6 +1,8 @@
 # teamwork-backend
 Backend for Online Team Collaboration System – Software Engineering Project
 
+> **Thành viên mới:** đọc [docs/huong-dan-dong-gop.md](docs/huong-dan-dong-gop.md) trước khi làm issue đầu tiên. File đó thống nhất quy trình làm việc, quy ước code và cách dùng AI cho cả nhóm.
+
 ## Yêu cầu
 - JDK 21
 - Docker Desktop
@@ -17,3 +19,9 @@ Backend for Online Team Collaboration System – Software Engineering Project
 - Issue có nhãn `chua-co-AC` chưa được bắt đầu: người nhận việc điền Acceptance Criteria, nhờ một thành viên khác đọc lại, rồi gỡ nhãn.
 - Mục **Phụ thuộc** trong issue: *cứng* là phải xong trước mới chạy thử được; *mềm* là làm song song được, ghép sau.
 - Issue mới tạo theo mẫu "Yêu cầu / tính năng" để giữ cùng một form.
+
+## Quy trình pull request và review
+- Nhánh `main` được bảo vệ: không push thẳng; mọi thay đổi đi qua pull request và cần **1 approve** của một thành viên khác.
+- Mỗi issue làm trên một nhánh riêng, ví dụ `feature/8-dang-ky`. Mô tả PR ghi `Closes #số` để issue tự đóng khi merge.
+- Người review đọc theo [docs/review-checklist.md](docs/review-checklist.md).
+- Ai dùng Claude Code có thể gõ `/review-pr <số PR>` để được hỗ trợ đối chiếu Acceptance Criteria và checklist. Approve vẫn phải do người bấm.
