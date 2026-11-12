@@ -13,6 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: teamwork
+          POSTGRES_USER: teamwork
+          POSTGRES_PASSWORD: teamwork
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -28,4 +43,8 @@ jobs:
         run: chmod +x mvnw
 
       - name: Run build and tests
+        env:
+          DB_URL: jdbc:postgresql://localhost:5432/teamwork
+          DB_USERNAME: teamwork
+          DB_PASSWORD: teamwork
         run: ./mvnw -B clean test
