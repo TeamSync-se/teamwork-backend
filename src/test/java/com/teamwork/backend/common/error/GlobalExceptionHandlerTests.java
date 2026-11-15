@@ -84,6 +84,21 @@ class GlobalExceptionHandlerTests {
 	}
 
 	@Test
+	void invalidRequestParameterUsesNameFromRequestParamAnnotation() throws Exception {
+		this.mockMvc.perform(get("/test-errors/search").param("limit", "0"))
+			.andExpectAll(problem(400, "VALIDATION_ERROR", "Dữ liệu không hợp lệ", "/test-errors/search"))
+			.andExpect(jsonPath("$.errors[0].field").value("limit"));
+	}
+
+	@Test
+	void missingRequiredParameterReturns400BadRequestWithoutErrors() throws Exception {
+		this.mockMvc.perform(get("/test-errors/items"))
+			.andExpectAll(problem(400, "BAD_REQUEST", CommonErrorCode.BAD_REQUEST.defaultMessage(),
+					"/test-errors/items"))
+			.andExpect(jsonPath("$.errors").doesNotExist());
+	}
+
+	@Test
 	void constraintViolationFromServiceReturns400WithErrorPerField() throws Exception {
 		this.mockMvc.perform(get("/test-errors/service-validation"))
 			.andExpectAll(problem(400, "VALIDATION_ERROR", "Dữ liệu không hợp lệ", "/test-errors/service-validation"))
@@ -113,6 +128,13 @@ class GlobalExceptionHandlerTests {
 	void businessNotFoundReturns404() throws Exception {
 		this.mockMvc.perform(get("/test-errors/business/not-found"))
 			.andExpectAll(problem(404, "NOT_FOUND", "Không tìm thấy nhóm", "/test-errors/business/not-found"));
+	}
+
+	@Test
+	void businessUnauthorizedReturns401() throws Exception {
+		this.mockMvc.perform(get("/test-errors/business/unauthorized"))
+			.andExpectAll(problem(401, "UNAUTHORIZED", CommonErrorCode.UNAUTHORIZED.defaultMessage(),
+					"/test-errors/business/unauthorized"));
 	}
 
 	@Test
@@ -156,9 +178,12 @@ class GlobalExceptionHandlerTests {
 
 	@ParameterizedTest
 	@CsvSource({ "502, Dịch vụ lưu tệp đang gặp lỗi", "503, Dịch vụ AI không phản hồi" })
-	void externalServiceFailureReturns502Or503WithSameCode(int status, String message) throws Exception {
+	void externalServiceFailureReturns502Or503WithSameCodeAndLogsWarning(int status, String message,
+			CapturedOutput output) throws Exception {
 		this.mockMvc.perform(get("/test-errors/external/{status}", status))
 			.andExpectAll(problem(status, "EXTERNAL_SERVICE_ERROR", message, "/test-errors/external/" + status));
+
+		assertThat(output).contains(" WARN ", "/test-errors/external/" + status).doesNotContain(" ERROR ");
 	}
 
 	@Test
@@ -172,7 +197,7 @@ class GlobalExceptionHandlerTests {
 			.getContentAsString();
 
 		assertThat(body).doesNotContain(SECRET, "IllegalStateException", "ErrorTestController");
-		assertThat(output).contains(SECRET, "IllegalStateException");
+		assertThat(output).contains(" ERROR ", SECRET, "IllegalStateException");
 	}
 
 	@Test
@@ -239,6 +264,10 @@ class GlobalExceptionHandlerTests {
 		void items(@RequestParam @Min(value = 1, message = "Kích thước trang phải từ 1 trở lên") int size) {
 		}
 
+		@GetMapping("/search")
+		void search(@RequestParam("limit") @Min(value = 1, message = "Số kết quả phải từ 1 trở lên") int pageSize) {
+		}
+
 		@GetMapping("/service-validation")
 		void serviceValidation() {
 			try (ValidatorFactory factory = Validation.buildDefaultValidatorFactory()) {
@@ -250,6 +279,11 @@ class GlobalExceptionHandlerTests {
 		@GetMapping("/business/not-found")
 		void businessNotFound() {
 			throw new BusinessException(CommonErrorCode.NOT_FOUND, "Không tìm thấy nhóm");
+		}
+
+		@GetMapping("/business/unauthorized")
+		void businessUnauthorized() {
+			throw new BusinessException(CommonErrorCode.UNAUTHORIZED);
 		}
 
 		@GetMapping("/business/forbidden")
