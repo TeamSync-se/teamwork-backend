@@ -84,6 +84,14 @@ Trong mỗi package: entity `Xxx`, `XxxRepository`, `XxxService`, `XxxController
 - Đường dẫn API bắt đầu bằng `/api`, danh từ số nhiều; dữ liệu theo nhóm nằm dưới `/api/groups/{groupId}/...`.
 - Thêm thư viện mới vào `pom.xml` thì ghi lý do trong mô tả PR.
 
+### Xử lý lỗi
+
+- Response lỗi theo mục 5 của [api/conventions.md](api/conventions.md). Package `common.error` đã dựng sẵn định dạng này; controller không tự tạo response lỗi.
+- Lỗi nghiệp vụ: service ném `BusinessException` kèm một `ErrorCode`, ví dụ `throw new BusinessException(CommonErrorCode.NOT_FOUND, "Không tìm thấy nhóm")`. Thông điệp được hiển thị thẳng cho người dùng, nên viết tiếng Việt và không chứa chi tiết nội bộ.
+- Mã lỗi riêng của phân hệ (ví dụ `EMAIL_ALREADY_EXISTS`): khai báo một enum implement `ErrorCode` trong package của phân hệ, và ghi mã đó vào file hợp đồng của phân hệ trong `docs/api/`.
+- Kiểm tra dữ liệu bằng `@Valid` trên DTO, ghi `message` tiếng Việt cho từng ràng buộc, ví dụ `@NotBlank(message = "Họ tên không được để trống")`. Lỗi tự trả về với mã `VALIDATION_ERROR` và danh sách `errors`.
+- Lỗi không lường trước thì để nó ném ra: người dùng chỉ nhận thông điệp chung, chi tiết được ghi vào log.
+
 ### Cơ sở dữ liệu
 
 - Mọi thay đổi CSDL bằng file migration Flyway trong `src/main/resources/db/migration/`.
