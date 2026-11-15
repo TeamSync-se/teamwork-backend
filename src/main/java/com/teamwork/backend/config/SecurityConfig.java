@@ -6,6 +6,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
@@ -16,19 +18,31 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
+	private static final String REGISTER_PATH = "/api/auth/register";
+
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			// Bộ lọc CORS đứng trước bước xác thực, nên request kiểm tra trước (preflight) không cần token
 			// và response 401 vẫn có header CORS để frontend đọc được mã lỗi.
 			.cors(Customizer.withDefaults())
+			// Khách chưa có tài khoản nên không có token CSRF. #9 sẽ tắt CSRF cho mọi API vì backend không dùng
+			// cookie phiên.
+			.csrf((csrf) -> csrf.ignoringRequestMatchers(REGISTER_PATH))
 			.authorizeHttpRequests((requests) -> requests
 				.requestMatchers(HttpMethod.GET, "/api/health").permitAll()
+				.requestMatchers(HttpMethod.POST, REGISTER_PATH).permitAll()
 				.anyRequest().authenticated())
 			// Không khai báo thì Spring Security trả 403 cho request chưa đăng nhập; quy ước API là 401.
 			.exceptionHandling((exceptions) -> exceptions
 				.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
 		return http.build();
+	}
+
+	/** Băm mật khẩu bằng BCrypt (NFR-01, QĐ01). BCrypt chỉ nhận tối đa 72 byte; xem {@code @MaxUtf8Bytes}. */
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 
 }
