@@ -17,7 +17,7 @@ public enum CommonErrorCode implements ErrorCode {
 	FORBIDDEN(HttpStatus.FORBIDDEN, "Bạn không có quyền thực hiện thao tác này"),
 	NOT_FOUND(HttpStatus.NOT_FOUND, "Không tìm thấy dữ liệu yêu cầu"),
 	METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "Phương thức HTTP không được hỗ trợ cho đường dẫn này"),
-	PAYLOAD_TOO_LARGE(HttpStatus.CONTENT_TOO_LARGE,"Tệp tải lên vượt quá dung lượng cho phép"),
+	PAYLOAD_TOO_LARGE(HttpStatus.CONTENT_TOO_LARGE, "Tệp tải lên vượt quá dung lượng cho phép"),
 	UNSUPPORTED_MEDIA_TYPE(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Kiểu dữ liệu gửi lên không được hỗ trợ"),
 	EXTERNAL_SERVICE_ERROR(HttpStatus.BAD_GATEWAY, "Dịch vụ bên ngoài đang gặp lỗi, vui lòng thử lại sau"),
 	/** Hợp đồng dùng chung mã {@code EXTERNAL_SERVICE_ERROR} cho cả 502 và 503. */

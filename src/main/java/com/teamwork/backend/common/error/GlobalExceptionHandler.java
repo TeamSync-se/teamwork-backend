@@ -8,17 +8,21 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.method.ParameterErrors;
 import org.springframework.validation.method.ParameterValidationResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
@@ -85,7 +89,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				errors.addAll(toFieldErrors(parameterErrors));
 			}
 			else {
-				String parameterName = result.getMethodParameter().getParameterName();
+				String parameterName = parameterName(result.getMethodParameter());
 				result.getResolvableErrors()
 					.forEach(error -> errors.add(new FieldErrorDetail(parameterName, error.getDefaultMessage())));
 			}
@@ -105,10 +109,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private ResponseEntity<Object> respond(Exception ex, ProblemDetail problem, HttpHeaders headers,
 			WebRequest request) {
 		HttpStatusCode status = HttpStatusCode.valueOf(problem.getStatus());
-		if (status.is5xxServerError()) {
+		if (status.value() == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
 			log.error("Lỗi {} khi xử lý {}", status.value(), pathOf(request), ex);
 		}
+		else if (status.is5xxServerError()) {
+			// 502, 503: dịch vụ bên ngoài lỗi tạm thời, không phải lỗi của backend nên chỉ cảnh báo
+			log.warn("Lỗi {} khi xử lý {}", status.value(), pathOf(request), ex);
+		}
 		return super.handleExceptionInternal(ex, problem, headers, status, request);
+	}
+
+	/** Tên tham số frontend gửi lên: theo {@code @RequestParam("...")} nếu có, không thì tên biến. */
+	private static String parameterName(MethodParameter parameter) {
+		RequestParam requestParam = parameter.getParameterAnnotation(RequestParam.class);
+		if (requestParam != null) {
+			String name = StringUtils.hasText(requestParam.name()) ? requestParam.name() : requestParam.value();
+			if (StringUtils.hasText(name)) {
+				return name;
+			}
+		}
+		return parameter.getParameterName();
 	}
 
 	private static List<FieldErrorDetail> toFieldErrors(Errors validationErrors) {
