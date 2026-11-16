@@ -31,7 +31,8 @@ public class SecurityConfig {
 			.csrf((csrf) -> csrf.ignoringRequestMatchers(REGISTER_PATH))
 			.authorizeHttpRequests((requests) -> requests
 				.requestMatchers(HttpMethod.GET, "/api/health").permitAll()
-				.requestMatchers(HttpMethod.POST, REGISTER_PATH).permitAll()
+				// Mở mọi phương thức, không chỉ POST: gọi sai phương thức thì nhận 405 thay vì 401 (quy ước API mục 4)
+				.requestMatchers(REGISTER_PATH).permitAll()
 				.anyRequest().authenticated())
 			// Không khai báo thì Spring Security trả 403 cho request chưa đăng nhập; quy ước API là 401.
 			.exceptionHandling((exceptions) -> exceptions
