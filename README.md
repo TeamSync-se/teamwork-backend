@@ -7,6 +7,16 @@ Backend for Online Team Collaboration System – Software Engineering Project
 - JDK 21
 - Docker Desktop
 
+## Cấu hình biến môi trường
+
+Backend đọc khóa dịch vụ ngoài (R2, AI, SMTP) và JWT từ biến môi trường. Để chạy đầy đủ chức năng:
+
+1. Copy file mẫu: `cp .env.example .env`
+2. Mở `.env` và điền giá trị thật (lấy từ kênh nội bộ nhóm).
+3. **Không commit file `.env`** — file này đã nằm trong `.gitignore`.
+
+> Nếu chỉ chạy backend để phát triển các tính năng không liên quan đến tệp, AI hay email thì chỉ cần `docker compose up -d` là đủ; các biến DB đã có giá trị mặc định.
+
 ## Chạy dự án
 1. Bật CSDL: `docker compose up -d`
 2. Chạy backend: `.\mvnw spring-boot:run` (Windows) hoặc `./mvnw spring-boot:run`
