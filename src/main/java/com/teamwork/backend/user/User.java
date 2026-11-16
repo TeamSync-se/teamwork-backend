@@ -20,6 +20,12 @@ import jakarta.persistence.Table;
 @Table(name = "users")
 public class User {
 
+	/**
+	 * Tên PostgreSQL tự đặt cho ràng buộc {@code UNIQUE} của cột {@code email} trong migration V1 (theo mẫu
+	 * {@code <bảng>_<cột>_key}).
+	 */
+	public static final String EMAIL_UNIQUE_CONSTRAINT = "users_email_key";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
