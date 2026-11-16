@@ -2,11 +2,14 @@ package com.teamwork.backend.auth;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN;
+import static org.springframework.http.HttpHeaders.ALLOW;
 import static org.springframework.http.HttpHeaders.ORIGIN;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -14,11 +17,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
+import java.util.TimeZone;
 import java.util.stream.Stream;
 
 import com.jayway.jsonpath.JsonPath;
 import com.teamwork.backend.TestcontainersConfiguration;
 import com.teamwork.backend.user.UserRepository;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,6 +49,14 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 @Import(TestcontainersConfiguration.class)
 class AuthControllerTests {
 
+	/**
+	 * Múi giờ khác UTC cho cả lớp, để {@link #createdAtIsStoredInUtc()} bắt được lỗi lưu giờ địa phương kể cả
+	 * trên máy CI (thường đặt giờ UTC). Phải đặt trước khi Spring tạo context và mở kết nối CSDL.
+	 */
+	private static final TimeZone TEST_TIME_ZONE = TimeZone.getTimeZone("Asia/Ho_Chi_Minh");
+
+	private static TimeZone originalTimeZone;
+
 	private static final String REGISTER_PATH = "/api/auth/register";
 
 	private static final String FULL_NAME = "Nguyễn Văn A";
@@ -64,6 +78,17 @@ class AuthControllerTests {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@BeforeAll
+	static void useNonUtcTimeZone() {
+		originalTimeZone = TimeZone.getDefault();
+		TimeZone.setDefault(TEST_TIME_ZONE);
+	}
+
+	@AfterAll
+	static void restoreTimeZone() {
+		TimeZone.setDefault(originalTimeZone);
+	}
 
 	@BeforeEach
 	void deleteAllUsers() {
@@ -172,6 +197,12 @@ class AuthControllerTests {
 						"Mật khẩu phải có ít nhất 8 ký tự"),
 				arguments("mật khẩu quá 64 ký tự", json(FULL_NAME, EMAIL, "a".repeat(65), "a".repeat(65)), "password",
 						"Mật khẩu tối đa 64 ký tự"),
+				// Vượt cả 64 ký tự lẫn 72 byte: chỉ báo một lỗi
+				arguments("mật khẩu không dấu quá 72 ký tự", json(FULL_NAME, EMAIL, "a".repeat(80), "a".repeat(80)),
+						"password", "Mật khẩu tối đa 64 ký tự"),
+				arguments("mật khẩu có dấu quá 64 ký tự",
+						json(FULL_NAME, EMAIL, "ệ".repeat(65), "ệ".repeat(65)), "password",
+						"Mật khẩu tối đa 64 ký tự"),
 				arguments("mật khẩu có dấu quá 72 byte", json(FULL_NAME, EMAIL, tooManyBytes, tooManyBytes), "password",
 						"Mật khẩu quá dài, vui lòng rút ngắn (ký tự có dấu được tính nhiều hơn một ký tự)"),
 				arguments("thiếu mật khẩu", json(FULL_NAME, EMAIL, null, PASSWORD), "password",
@@ -180,6 +211,26 @@ class AuthControllerTests {
 						"confirmPassword", "Mật khẩu xác nhận không khớp"),
 				arguments("thiếu xác nhận mật khẩu", json(FULL_NAME, EMAIL, PASSWORD, null), "confirmPassword",
 						"Vui lòng nhập lại mật khẩu"));
+	}
+
+	@ParameterizedTest(name = "{0}")
+	@MethodSource("passwordsAtLengthLimits")
+	void passwordAtLengthLimitIsAccepted(String scenario, String password) throws Exception {
+		this.mockMvc.perform(register(json(FULL_NAME, EMAIL, password, password))).andExpect(status().isCreated());
+	}
+
+	static Stream<Arguments> passwordsAtLengthLimits() {
+		return Stream.of(arguments("đúng 8 ký tự", "a".repeat(8)), arguments("đúng 64 ký tự", "a".repeat(64)),
+				arguments("có dấu, đúng 72 byte", "ệ".repeat(24)));
+	}
+
+	@Test
+	void wrongHttpMethodReturns405() throws Exception {
+		this.mockMvc.perform(get(REGISTER_PATH))
+			.andExpect(status().isMethodNotAllowed())
+			.andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+			.andExpect(jsonPath("$.code").value("METHOD_NOT_ALLOWED"))
+			.andExpect(header().string(ALLOW, containsString("POST")));
 	}
 
 	@Test
