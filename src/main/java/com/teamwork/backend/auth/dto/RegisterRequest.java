@@ -1,6 +1,5 @@
 package com.teamwork.backend.auth.dto;
 
-import com.teamwork.backend.common.validation.MaxUtf8Bytes;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,9 +24,7 @@ public record RegisterRequest(
 		String email,
 
 		@NotNull(message = "Mật khẩu không được để trống")
-		@Size(min = 8, message = "Mật khẩu phải có ít nhất 8 ký tự")
-		@Size(max = 64, message = "Mật khẩu tối đa 64 ký tự")
-		@MaxUtf8Bytes(value = 72, message = "Mật khẩu quá dài, vui lòng rút ngắn (ký tự có dấu được tính nhiều hơn một ký tự)")
+		@PasswordLength
 		String password,
 
 		@NotNull(message = "Vui lòng nhập lại mật khẩu")

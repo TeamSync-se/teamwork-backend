@@ -39,7 +39,7 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	/** Băm mật khẩu bằng BCrypt (NFR-01, QĐ01). BCrypt chỉ nhận tối đa 72 byte; xem {@code @MaxUtf8Bytes}. */
+	/** Băm mật khẩu bằng BCrypt (NFR-01, QĐ01). BCrypt chỉ nhận tối đa 72 byte; xem {@code @PasswordLength}. */
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
