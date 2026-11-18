@@ -1,5 +1,7 @@
 package com.teamwork.backend.auth;
 
+import com.teamwork.backend.auth.dto.LoginRequest;
+import com.teamwork.backend.auth.dto.LoginResponse;
 import com.teamwork.backend.auth.dto.RegisterRequest;
 import com.teamwork.backend.user.dto.UserResponse;
 import jakarta.validation.Valid;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * API đăng ký, theo {@code docs/api/auth.md}. Không cần đăng nhập (xem {@code SecurityConfig}).
+ * API đăng ký và đăng nhập, theo {@code docs/api/auth.md}. Không cần đăng nhập (xem {@code SecurityConfig}).
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -27,6 +29,11 @@ public class AuthController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public UserResponse register(@Valid @RequestBody RegisterRequest request) {
 		return this.authService.register(request);
+	}
+
+	@PostMapping("/login")
+	public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+		return this.authService.login(request);
 	}
 
 }

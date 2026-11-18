@@ -9,7 +9,10 @@ import org.springframework.http.HttpStatus;
  */
 public enum AuthErrorCode implements ErrorCode {
 
-	EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "Email đã được sử dụng");
+	EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "Email đã được sử dụng"),
+
+	/** Sai email và sai mật khẩu dùng chung mã và thông điệp, để không lộ email nào đã có tài khoản. */
+	INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "Email hoặc mật khẩu không chính xác");
 
 	private final HttpStatus status;
 
