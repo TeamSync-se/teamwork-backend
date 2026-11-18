@@ -38,6 +38,7 @@
   ```
 
 - Thiếu token, token sai hoặc đã hết hạn: backend trả `401` với mã `UNAUTHORIZED`. Frontend xóa token đang lưu và chuyển về trang Đăng nhập.
+- `/api/auth/**` và `/api/health` bỏ qua header `Authorization` nếu frontend có gửi kèm, nên token cũ hay hỏng không làm hỏng việc đăng nhập lại.
 - Backend không dùng cookie để giữ phiên. Cách frontend lưu token được gợi ý ở mục 5 của [auth.md](auth.md).
 
 ## 4. Mã HTTP
