@@ -3,41 +3,69 @@ package com.teamwork.backend.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
- * Cấu hình Spring Security chung. Các issue sau mở rộng lớp này: đăng nhập JWT (#9) thêm bộ lọc token,
- * mở {@code /api/auth/**} và trả lỗi 401, 403 theo định dạng lỗi chung.
+ * Cấu hình Spring Security chung (mục 3 của {@code docs/api/conventions.md}): mọi API, trừ
+ * {@code /api/auth/**} và {@code /api/health}, phải gửi header {@code Authorization: Bearer <token>}. Token do
+ * {@code POST /api/auth/login} phát hành; khóa ký nằm ở {@link JwtConfig}.
  */
 @Configuration(proxyBeanMethods = false)
 public class SecurityConfig {
 
-	private static final String REGISTER_PATH = "/api/auth/register";
+	/**
+	 * API không cần đăng nhập. Mở {@code /api/auth/**} cho mọi phương thức, không chỉ POST: gọi sai phương thức
+	 * thì nhận 405 thay vì 401 (quy ước API mục 4).
+	 */
+	private static final RequestMatcher PUBLIC_ENDPOINTS = new OrRequestMatcher(
+			PathPatternRequestMatcher.pathPattern("/api/auth/**"),
+			PathPatternRequestMatcher.pathPattern(HttpMethod.GET, "/api/health"));
 
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	SecurityFilterChain securityFilterChain(HttpSecurity http, JsonMapper jsonMapper) throws Exception {
+		SecurityErrorHandler errorHandler = new SecurityErrorHandler(jsonMapper);
 		http
 			// Bộ lọc CORS đứng trước bước xác thực, nên request kiểm tra trước (preflight) không cần token
 			// và response 401 vẫn có header CORS để frontend đọc được mã lỗi.
 			.cors(Customizer.withDefaults())
-			// Khách chưa có tài khoản nên không có token CSRF. #9 sẽ tắt CSRF cho mọi API vì backend không dùng
-			// cookie phiên.
-			.csrf((csrf) -> csrf.ignoringRequestMatchers(REGISTER_PATH))
+			// Token đi trong header, không dùng cookie phiên, nên không cần CSRF và không tạo session.
+			.csrf(AbstractHttpConfigurer::disable)
+			.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			// Backend không có API đăng xuất: frontend tự xóa token (docs/api/auth.md mục 4).
+			.logout(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers(HttpMethod.GET, "/api/health").permitAll()
-				// Mở mọi phương thức, không chỉ POST: gọi sai phương thức thì nhận 405 thay vì 401 (quy ước API mục 4)
-				.requestMatchers(REGISTER_PATH).permitAll()
+				.requestMatchers(PUBLIC_ENDPOINTS).permitAll()
 				.anyRequest().authenticated())
-			// Không khai báo thì Spring Security trả 403 cho request chưa đăng nhập; quy ước API là 401.
+			.oauth2ResourceServer((resourceServer) -> resourceServer
+				.jwt(Customizer.withDefaults())
+				.bearerTokenResolver(bearerTokenResolver())
+				.authenticationEntryPoint(errorHandler)
+				.accessDeniedHandler(errorHandler))
 			.exceptionHandling((exceptions) -> exceptions
-				.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+				.authenticationEntryPoint(errorHandler)
+				.accessDeniedHandler(errorHandler));
 		return http.build();
+	}
+
+	/**
+	 * Bỏ qua header {@code Authorization} ở API công khai. Nếu không, token cũ hoặc hỏng còn nằm trong cookie của
+	 * frontend làm chính API đăng nhập trả 401, và người dùng không đăng nhập lại được.
+	 */
+	private static BearerTokenResolver bearerTokenResolver() {
+		DefaultBearerTokenResolver headerResolver = new DefaultBearerTokenResolver();
+		return (request) -> PUBLIC_ENDPOINTS.matches(request) ? null : headerResolver.resolve(request);
 	}
 
 	/** Băm mật khẩu bằng BCrypt (NFR-01, QĐ01). BCrypt chỉ nhận tối đa 72 byte; xem {@code @PasswordLength}. */

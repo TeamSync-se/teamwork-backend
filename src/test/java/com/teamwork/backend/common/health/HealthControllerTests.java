@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.teamwork.backend.config.CorsConfig;
+import com.teamwork.backend.config.JwtConfig;
 import com.teamwork.backend.config.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * Dùng cấu hình Security thật của ứng dụng để chứng minh {@code /api/health} không cần đăng nhập.
  */
 @WebMvcTest(HealthController.class)
-@Import({ SecurityConfig.class, CorsConfig.class })
+@Import({ SecurityConfig.class, JwtConfig.class, CorsConfig.class })
 class HealthControllerTests {
 
 	@Autowired
