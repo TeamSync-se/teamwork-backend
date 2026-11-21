@@ -11,6 +11,9 @@ Backend for Online Team Collaboration System – Software Engineering Project
 1. Bật CSDL: `docker compose up -d`
 2. Chạy backend: `.\mvnw spring-boot:run` (Windows) hoặc `./mvnw spring-boot:run`
 3. Backend chạy ở http://localhost:8080. Flyway tự tạo bảng khi khởi động.
+4. Kiểm tra: mở http://localhost:8080/api/health, thấy `{"status":"UP"}` là backend đã chạy.
+
+Mặc định backend chỉ cho trang ở `http://localhost:3000` gọi API từ trình duyệt (CORS). Frontend chạy ở địa chỉ khác thì đặt biến môi trường `CORS_ALLOWED_ORIGINS` trước khi chạy backend, nhiều địa chỉ cách nhau bằng dấu phẩy, ví dụ `CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001`.
 
 ## Chạy test
 - Lệnh: `.\mvnw test` (Windows) hoặc `./mvnw test`.
