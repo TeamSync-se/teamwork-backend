@@ -35,7 +35,7 @@ Cột **Ai** cho biết bước đó người làm hay giao cho AI làm.
 | 8 | Đọc lại toàn bộ thay đổi, chạy thử ứng dụng và gọi thử API | Người |
 | 9 | Tự kiểm theo review-checklist, commit theo quy ước ở mục 4 | AI |
 | 10 | Push và mở pull request theo mẫu, có `Closes #số`. AI chỉ làm bước này khi người đồng ý | Người hoặc AI |
-| 11 | Chọn người review theo vòng luân phiên; PR nền tảng nhờ 2 người | Người |
+| 11 | Nhờ người review theo cặp review chéo: Đặng Sang và Phạm Sang review cho nhau, Phúc và Lý review cho nhau | Người |
 | 12 | Xử lý góp ý: AI có thể sửa, người kiểm lại rồi push vào cùng nhánh và nhờ review lại | Người, AI hỗ trợ |
 | 13 | Đủ 1 approve, hết bình luận, CI xanh: người mở PR bấm merge, rồi xóa nhánh | Người |
 | 14 | Báo người làm các issue đang chờ issue này, và báo frontend nếu API đã sẵn sàng | Người |
