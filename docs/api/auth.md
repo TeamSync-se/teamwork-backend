@@ -27,8 +27,10 @@
 |---|---|---|
 | `fullName` | Có | Không được chỉ có khoảng trắng; tối đa 100 ký tự. Backend bỏ khoảng trắng ở hai đầu |
 | `email` | Có | Đúng định dạng email; tối đa 255 ký tự. Không phân biệt chữ hoa, chữ thường; backend lưu ở dạng chữ thường |
-| `password` | Có | Từ 8 đến 64 ký tự |
+| `password` | Có | Từ 8 đến 64 ký tự, và không quá 72 byte khi mã hóa UTF-8 (xem ghi chú dưới bảng) |
 | `confirmPassword` | Có | Phải giống `password` |
+
+Giới hạn 72 byte là giới hạn của BCrypt, thuật toán backend dùng để băm mật khẩu. Mật khẩu chỉ gồm chữ không dấu, số và ký hiệu thì 64 ký tự luôn nằm trong giới hạn, vì mỗi ký tự chiếm 1 byte. Một ký tự có dấu như "ệ" chiếm 3 byte, nên mật khẩu dài có nhiều ký tự có dấu có thể vượt giới hạn. Khi đó backend trả lỗi `VALIDATION_ERROR` trên trường `password`, frontend hiện lỗi dưới ô mật khẩu như các lỗi khác.
 
 Frontend nên kiểm tra trước các quy tắc này để báo lỗi ngay trên màn hình, nhưng backend vẫn kiểm tra lại và là bên quyết định cuối cùng.
 

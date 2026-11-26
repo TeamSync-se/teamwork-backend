@@ -35,7 +35,7 @@ Cột **Ai** cho biết bước đó người làm hay giao cho AI làm.
 | 8 | Đọc lại toàn bộ thay đổi, chạy thử ứng dụng và gọi thử API | Người |
 | 9 | Tự kiểm theo review-checklist, commit theo quy ước ở mục 4 | AI |
 | 10 | Push và mở pull request theo mẫu, có `Closes #số`. AI chỉ làm bước này khi người đồng ý | Người hoặc AI |
-| 11 | Chọn người review theo vòng luân phiên; PR nền tảng nhờ 2 người | Người |
+| 11 | Nhờ người review theo cặp review chéo: Đặng Sang và Phạm Sang review cho nhau, Phúc và Lý review cho nhau | Người |
 | 12 | Xử lý góp ý: AI có thể sửa, người kiểm lại rồi push vào cùng nhánh và nhờ review lại | Người, AI hỗ trợ |
 | 13 | Đủ 1 approve, hết bình luận, CI xanh: người mở PR bấm merge, rồi xóa nhánh | Người |
 | 14 | Báo người làm các issue đang chờ issue này, và báo frontend nếu API đã sẵn sàng | Người |
@@ -83,6 +83,14 @@ Trong mỗi package: entity `Xxx`, `XxxRepository`, `XxxService`, `XxxController
 - Không trả entity trực tiếp ra API, luôn qua DTO.
 - Đường dẫn API bắt đầu bằng `/api`, danh từ số nhiều; dữ liệu theo nhóm nằm dưới `/api/groups/{groupId}/...`.
 - Thêm thư viện mới vào `pom.xml` thì ghi lý do trong mô tả PR.
+
+### Xử lý lỗi
+
+- Response lỗi theo mục 5 của [api/conventions.md](api/conventions.md). Package `common.error` đã dựng sẵn định dạng này; controller không tự tạo response lỗi.
+- Lỗi nghiệp vụ: service ném `BusinessException` kèm một `ErrorCode`, ví dụ `throw new BusinessException(CommonErrorCode.NOT_FOUND, "Không tìm thấy nhóm")`. Thông điệp được hiển thị thẳng cho người dùng, nên viết tiếng Việt và không chứa chi tiết nội bộ.
+- Mã lỗi riêng của phân hệ (ví dụ `EMAIL_ALREADY_EXISTS`): khai báo một enum implement `ErrorCode` trong package của phân hệ, và ghi mã đó vào file hợp đồng của phân hệ trong `docs/api/`.
+- Kiểm tra dữ liệu bằng `@Valid` trên DTO, ghi `message` tiếng Việt cho từng ràng buộc, ví dụ `@NotBlank(message = "Họ tên không được để trống")`. Lỗi tự trả về với mã `VALIDATION_ERROR` và danh sách `errors`.
+- Lỗi không lường trước thì để nó ném ra: người dùng chỉ nhận thông điệp chung, chi tiết được ghi vào log.
 
 ### Cơ sở dữ liệu
 

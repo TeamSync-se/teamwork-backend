@@ -25,7 +25,7 @@
 - `id` là số nguyên.
 - Thời điểm là chuỗi ISO 8601 theo giờ UTC, có chữ `Z` ở cuối: `"2026-11-13T08:30:00Z"`. Ngày không kèm giờ: `"2026-11-13"`. Frontend tự đổi sang giờ Việt Nam khi hiển thị.
 - Giá trị liệt kê (vai trò, trạng thái...) là chuỗi chữ in hoa, nối bằng dấu gạch dưới: `"LEADER"`, `"IN_PROGRESS"`.
-- Trường không có giá trị thì trả `null`, không bỏ trường đó đi.
+- Trường không có giá trị thì trả `null`, không bỏ trường đó đi. **Ngoại lệ:** trường `errors` trong response lỗi chỉ có khi `code` là `VALIDATION_ERROR`; lỗi khác không có trường này (mục 5), nên frontend phải xử lý được trường hợp không có `errors`.
 - Response **không bao giờ** chứa mật khẩu, mã băm mật khẩu hay khóa bí mật.
 
 ## 3. Xác thực
@@ -51,8 +51,10 @@
 | `401 Unauthorized` | Chưa đăng nhập, token sai hoặc hết hạn; hoặc đăng nhập sai thông tin |
 | `403 Forbidden` | Đã đăng nhập, thuộc nhóm, nhưng vai trò không đủ quyền |
 | `404 Not Found` | Không tìm thấy, hoặc người gọi không thuộc nhóm (xem mục 6) |
+| `405 Method Not Allowed` | Gọi sai phương thức, ví dụ `GET` vào API chỉ nhận `POST` |
 | `409 Conflict` | Xung đột với dữ liệu đang có, ví dụ email đã được dùng |
 | `413 Payload Too Large` | Tệp tải lên vượt giới hạn (phân hệ tài nguyên) |
+| `415 Unsupported Media Type` | Gửi body mà thiếu header `Content-Type: application/json` hoặc dùng kiểu dữ liệu khác |
 | `500 Internal Server Error` | Lỗi không lường trước ở backend |
 | `502 Bad Gateway`, `503 Service Unavailable` | Dịch vụ bên ngoài (lưu tệp, AI, email) bị lỗi hoặc không phản hồi |
 
@@ -85,7 +87,7 @@ Mọi lỗi trả về cùng một dạng, theo chuẩn Problem Details (RFC 945
 | `detail` | Thông điệp tiếng Việt, dễ hiểu | Hiển thị cho người dùng |
 | `instance` | Đường dẫn API gây lỗi | Ghi log, tìm lỗi |
 | `timestamp` | Thời điểm xảy ra lỗi (UTC) | Ghi log, tìm lỗi |
-| `errors` | Danh sách lỗi theo từng trường; chỉ có khi `code` là `VALIDATION_ERROR` | Hiện lỗi ngay dưới ô nhập tương ứng |
+| `errors` | Danh sách lỗi theo từng trường; chỉ có khi `code` là `VALIDATION_ERROR`, lỗi khác không có trường này (kể cả `null`) | Hiện lỗi ngay dưới ô nhập tương ứng |
 | `type`, `title` | Trường chuẩn của RFC 9457 | Có thể bỏ qua |
 
 Lỗi `500` chỉ có thông điệp chung, không chứa chi tiết nội bộ như tên lớp hay câu lệnh SQL; chi tiết chỉ ghi vào log của backend.
@@ -99,7 +101,9 @@ Lỗi `500` chỉ có thông điệp chung, không chứa chi tiết nội bộ 
 | `UNAUTHORIZED` | 401 | Thiếu token, token sai hoặc hết hạn |
 | `FORBIDDEN` | 403 | Vai trò không đủ quyền |
 | `NOT_FOUND` | 404 | Không tìm thấy, hoặc không thuộc nhóm |
+| `METHOD_NOT_ALLOWED` | 405 | Gọi sai phương thức HTTP, ví dụ `GET` vào API chỉ nhận `POST` |
 | `PAYLOAD_TOO_LARGE` | 413 | Tệp tải lên vượt giới hạn |
+| `UNSUPPORTED_MEDIA_TYPE` | 415 | Gửi body mà thiếu header `Content-Type: application/json` hoặc dùng kiểu dữ liệu khác |
 | `EXTERNAL_SERVICE_ERROR` | 502, 503 | Dịch vụ bên ngoài lỗi |
 | `INTERNAL_ERROR` | 500 | Lỗi không lường trước |
 
