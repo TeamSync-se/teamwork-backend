@@ -15,8 +15,6 @@
 | `GET /api/groups/{groupId}/meetings/{meetingId}/votes` | Tổng hợp bình chọn và gợi ý khung giờ | #29 | Có |
 | `POST /api/groups/{groupId}/meetings/{meetingId}/confirm` | Chốt lịch họp chính thức | #30 | Có |
 
----
-
 ## 1. Quy tắc chung của phân hệ cuộc họp
 
 - **Quyền Người tổ chức:** Mọi thành viên trong nhóm (`LEADER` và `MEMBER`) đều tạo được cuộc họp và trở thành người tổ chức (`creator`). Chỉ `creator` của cuộc họp hoặc `LEADER` của nhóm được chốt lịch chính thức (`confirm`).
@@ -37,8 +35,6 @@ Ngoài các mã lỗi chung ở mục 5 của [conventions.md](conventions.md) (
 | `INVALID_PARTICIPANT` | 400 | Có ID trong `invitedUserIds` không tồn tại hoặc không thuộc nhóm `groupId` |
 | `INVALID_SLOT_SELECTION` | 400 | ID khung giờ gửi lên khi bình chọn (#28) hoặc chốt lịch (#30) không tồn tại hoặc không thuộc cuộc họp `meetingId` |
 | `MEETING_ALREADY_CONFIRMED` | 409 | Gửi bình chọn (#28) hoặc chốt lịch (#30) khi cuộc họp đã ở trạng thái `CONFIRMED` |
-
----
 
 ## 2. Cấu trúc dùng chung: Chi tiết cuộc họp
 
@@ -116,8 +112,6 @@ Khi cuộc họp ở trạng thái `"CONFIRMED"`, các trường chốt lịch c
 | `createdAt` | `string` | Thời điểm tạo (UTC) |
 | `updatedAt` | `string` | Thời điểm cập nhật gần nhất (UTC) |
 
----
-
 ## 3. Tạo cuộc họp và đề xuất khung giờ: `POST /api/groups/{groupId}/meetings`
 
 **Issue:** BE #27 · FE #22 · **Use Case:** UC13 · **Màn hình:** 5.2
@@ -167,7 +161,7 @@ Thứ tự kiểm tra: `401` → lỗi body / tham số (`400 BAD_REQUEST`, `400
 |---|---|---|---|
 | 401 | `UNAUTHORIZED` | Thiếu token, token sai hoặc hết hạn | Xóa token, chuyển về `/login` |
 | 400 | `BAD_REQUEST` | Body không phải JSON hợp lệ, chuỗi thời gian sai chuẩn ISO 8601 có múi giờ/offset, hoặc `groupId` không phải số | Hiện `detail` |
-| 400 | `VALIDATION_ERROR` | `title` trống/quá 200 ký tự, `description` quá 2000 ký tự, `externalLink` sai URL/quá 500 ký tự, `invitedUserIds` chứa `null`, `timeSlots` rỗng/quá 20/thiếu `startTime` hoặc `endTime` | Hiện lỗi theo `errors[].field` dưới từng ô nhập |
+| 400 | `VALIDATION_ERROR` | Vi phạm ràng buộc trường; `errors[].field` có thể là `title`, `description`, `externalLink`, `invitedUserIds`, `invitedUserIds[i]`, `timeSlots`, `timeSlots[i]`, `timeSlots[i].startTime`, `timeSlots[i].endTime` | Hiện lỗi theo `errors[].field` dưới từng ô nhập |
 | 404 | `NOT_FOUND` | Nhóm không tồn tại hoặc người gọi không thuộc nhóm `groupId` | Hiện `detail` |
 | 400 | `INVALID_TIME_SLOT` | `startTime >= endTime`, `startTime <= hiện tại`, hoặc hai khung giờ trùng khớp hoàn toàn cả `startTime` lẫn `endTime` sau khi chuẩn hóa UTC | Hiện `detail` ở phần chọn khung giờ |
 | 400 | `INVALID_PARTICIPANT` | Có ID trong `invitedUserIds` không tồn tại hoặc không thuộc nhóm `groupId` | Hiện `detail` ở phần chọn thành viên |
@@ -185,7 +179,7 @@ Ví dụ lỗi `400 VALIDATION_ERROR`:
   "timestamp": "2026-11-26T07:00:00Z",
   "errors": [
     { "field": "title", "message": "Tiêu đề cuộc họp không được để trống" },
-    { "field": "timeSlots", "message": "Phải đề xuất ít nhất 1 khung giờ" }
+    { "field": "timeSlots[0].startTime", "message": "Thời gian bắt đầu không được để trống" }
   ]
 }
 ```
@@ -203,8 +197,6 @@ Ví dụ lỗi `400 INVALID_TIME_SLOT`:
   "timestamp": "2026-11-26T07:00:00Z"
 }
 ```
-
----
 
 ## 4. Danh sách cuộc họp của nhóm: `GET /api/groups/{groupId}/meetings`
 
@@ -294,10 +286,8 @@ Thứ tự kiểm tra: `401` → lỗi tham số (`400 BAD_REQUEST`, `400 VALIDA
 |---|---|---|
 | 401 | `UNAUTHORIZED` | Thiếu token, token sai hoặc hết hạn |
 | 400 | `BAD_REQUEST` | `status` không thuộc `VOTING`, `CONFIRMED`, `UPCOMING`, `PAST`, `ALL`; `page`, `size` hoặc `groupId` không phải số |
-| 400 | `VALIDATION_ERROR` | `page < 0`, `size < 1` hoặc `size > 100` |
+| 400 | `VALIDATION_ERROR` | `page < 0`, `size < 1` hoặc `size > 100`; `errors[].field` là `page` hoặc `size` |
 | 404 | `NOT_FOUND` | Nhóm không tồn tại hoặc người gọi không thuộc nhóm `groupId` |
-
----
 
 ## 5. Chi tiết cuộc họp: `GET /api/groups/{groupId}/meetings/{meetingId}`
 
@@ -318,8 +308,6 @@ Thứ tự kiểm tra: `401` → lỗi tham số (`400 BAD_REQUEST`) → `404`.
 | 401 | `UNAUTHORIZED` | Thiếu token, token sai hoặc hết hạn |
 | 400 | `BAD_REQUEST` | `groupId` hoặc `meetingId` không phải số |
 | 404 | `NOT_FOUND` | Người gọi không thuộc nhóm `groupId`, hoặc `meetingId` không tồn tại / không thuộc nhóm `groupId` |
-
----
 
 ## 6. Bình chọn khung giờ họp: `POST /api/groups/{groupId}/meetings/{meetingId}/votes`
 
@@ -358,7 +346,7 @@ Thứ tự kiểm tra: `401` → lỗi body / tham số (`400 BAD_REQUEST`, `400
 |---|---|---|---|
 | 401 | `UNAUTHORIZED` | Thiếu token, token sai hoặc hết hạn | Xóa token, chuyển về `/login` |
 | 400 | `BAD_REQUEST` | Body không phải JSON hợp lệ, sai kiểu dữ liệu, hoặc `groupId`/`meetingId` không phải số | Hiện `detail` |
-| 400 | `VALIDATION_ERROR` | Thiếu `selectedSlotIds`, `selectedSlotIds` là `null`, hoặc có phần tử `null` | Hiện `detail` / lỗi trường |
+| 400 | `VALIDATION_ERROR` | Thiếu `selectedSlotIds`, `selectedSlotIds` là `null`, hoặc có phần tử `null`; `errors[].field` là `selectedSlotIds` hoặc `selectedSlotIds[i]` | Hiện `detail` / lỗi trường |
 | 404 | `NOT_FOUND` | Người gọi không thuộc nhóm `groupId`, hoặc `meetingId` không tồn tại / không thuộc nhóm `groupId` | Hiện `detail` |
 | 403 | `FORBIDDEN` | Thuộc nhóm `groupId` nhưng **không** nằm trong `meeting_participants` (không được mời) | Ẩn form bình chọn hoặc hiện thông báo không có quyền |
 | 409 | `MEETING_ALREADY_CONFIRMED` | Cuộc họp đã chuyển sang trạng thái `CONFIRMED` | Hiện `detail` và tải lại chi tiết cuộc họp |
@@ -377,8 +365,6 @@ Ví dụ lỗi `409 MEETING_ALREADY_CONFIRMED`:
   "timestamp": "2026-11-26T09:16:00Z"
 }
 ```
-
----
 
 ## 7. Tổng hợp bình chọn và gợi ý khung giờ: `GET /api/groups/{groupId}/meetings/{meetingId}/votes`
 
@@ -456,6 +442,14 @@ Ví dụ response (minh họa trường hợp nhiều khung giờ hòa phiếu c
 | `timeSlots[].voters` | `{ id: number, fullName: string }[]` | Danh sách người đã chọn khung giờ này (còn trong nhóm), sắp xếp theo `fullName` ↑, `id` ↑ |
 | `timeSlots[].isSuggested` | `boolean` | Cờ gợi ý khung giờ phù hợp nhất |
 
+### Cách hiển thị ma trận bình chọn trên màn hình 5.4
+
+Frontend kết hợp `participants[].hasVoted` và `timeSlots[].voters` để xác định trạng thái của từng thành viên tại mỗi khung giờ, tránh hiển thị nhầm người chưa bình chọn thành `"Bận"`:
+
+- `participant.hasVoted === false`: hiển thị **"Chưa bình chọn"**.
+- `participant.hasVoted === true` và `participant.id` có trong `slot.voters`: hiển thị **"Có thể"**.
+- `participant.hasVoted === true` và `participant.id` không có trong `slot.voters`: hiển thị **"Bận"**.
+
 ### Quy tắc gán `isSuggested` (QĐ07)
 
 - Nếu mọi khung giờ đều có `voteCount == 0` → tất cả trả `isSuggested: false`.
@@ -471,8 +465,6 @@ Thứ tự kiểm tra: `401` → lỗi tham số (`400 BAD_REQUEST`) → `404`.
 | 401 | `UNAUTHORIZED` | Thiếu token, token sai hoặc hết hạn |
 | 400 | `BAD_REQUEST` | `groupId` hoặc `meetingId` không phải số |
 | 404 | `NOT_FOUND` | Người gọi không thuộc nhóm `groupId`, hoặc `meetingId` không tồn tại / không thuộc nhóm `groupId` |
-
----
 
 ## 8. Chốt lịch họp chính thức: `POST /api/groups/{groupId}/meetings/{meetingId}/confirm`
 
@@ -508,14 +500,12 @@ Thứ tự kiểm tra: `401` → lỗi body / tham số (`400 BAD_REQUEST`, `400
 |---|---|---|---|
 | 401 | `UNAUTHORIZED` | Thiếu token, token sai hoặc hết hạn | Xóa token, chuyển về `/login` |
 | 400 | `BAD_REQUEST` | Body không phải JSON hợp lệ, sai kiểu dữ liệu, hoặc `groupId`/`meetingId` không phải số | Hiện `detail` |
-| 400 | `VALIDATION_ERROR` | Thiếu `confirmedSlotId`, hoặc `externalLink` sai định dạng URL / quá 500 ký tự | Hiện lỗi dưới ô tương ứng |
+| 400 | `VALIDATION_ERROR` | Thiếu `confirmedSlotId`, hoặc `externalLink` sai định dạng URL / quá 500 ký tự; `errors[].field` là `confirmedSlotId` hoặc `externalLink` | Hiện lỗi dưới ô tương ứng |
 | 404 | `NOT_FOUND` | Người gọi không thuộc nhóm `groupId`, hoặc `meetingId` không tồn tại / không thuộc nhóm `groupId` | Hiện `detail` |
 | 403 | `FORBIDDEN` | Không phải `creator` của cuộc họp và không phải `LEADER` của nhóm | Ẩn khối chốt lịch hoặc báo không có quyền |
 | 409 | `MEETING_ALREADY_CONFIRMED` | Cuộc họp đã ở trạng thái `CONFIRMED` | Hiện `detail` và tải lại chi tiết cuộc họp |
 | 400 | `INVALID_SLOT_SELECTION` | `confirmedSlotId` không tồn tại hoặc không thuộc cuộc họp `meetingId` | Hiện `detail` |
 | 400 | `INVALID_TIME_SLOT` | Khung giờ được chọn đã kết thúc (`endTime <= hiện tại`) | Hiện `detail` và yêu cầu chọn khung khác |
-
----
 
 ## 9. Luồng sử dụng phía frontend và phạm vi Milestone 1
 
@@ -523,18 +513,18 @@ Thứ tự kiểm tra: `401` → lỗi body / tham số (`400 BAD_REQUEST`, `400
 
 1. **Danh sách cuộc họp (màn hình 5.1 — `/groups/[groupId]/meetings`):**
    - Gọi `GET /api/groups/{groupId}/meetings?status=...&page=...&size=20`.
-   - Bộ lọc tab: mặc định `VOTING` + `UPCOMING` (không truyền `status`), tab `Đã chốt` (`CONFIRMED` hoặc `UPCOMING`), tab `Đang bình chọn` (`VOTING`), hoặc `Tất cả` (`ALL`).
-   - Dựa vào `status`, `isInvited` và `hasMyVote` để hiển thị nút `"Bình chọn ngay"` / `"Xem chi tiết"` và nhãn `"x/y thành viên đã biểu quyết"`.
+   - Ánh xạ 3 tab lọc trên màn hình 5.1 khớp BE #31: `Tất cả` (`?status=ALL`), `Đã chốt` (`?status=CONFIRMED`), `Đang bình chọn` (`?status=VOTING`). Khi gọi API không truyền `status`, backend trả mặc định `VOTING` và `UPCOMING`.
+   - Dựa vào `status`, `isInvited` và `hasMyVote` để hiển thị nút `"Bình chọn ngay"` / `"Chi tiết"` và nhãn `"x/y thành viên đã biểu quyết"`.
 2. **Tạo cuộc họp mới (màn hình 5.2 — `/groups/[groupId]/meetings/new`):**
    - Tải danh sách thành viên nhóm (từ API thành viên nhóm) để chọn `invitedUserIds`.
-   - Khi gửi form, chuyển ngày + giờ bắt đầu/kết thúc sang ISO 8601 có múi giờ/offset (`+07:00` hoặc `Z`) và gọi `POST /api/groups/{groupId}/meetings`. Thành công (`201`) chuyển tới `/groups/[groupId]/meetings/[meetingId]`.
+   - Với mỗi khung giờ, người dùng chọn 1 ngày và giờ bắt đầu / kết thúc trong ngày đó theo giờ Việt Nam (`+07:00`); client ghép thành chuỗi ISO 8601 gửi qua `POST /api/groups/{groupId}/meetings`. Thành công (`201`) chuyển tới `/groups/[groupId]/meetings/[meetingId]`.
 3. **Chi tiết, bình chọn, kết quả và chốt lịch (màn hình 5.3, 5.4, 5.5 — `/groups/[groupId]/meetings/[meetingId]`):**
    - Gọi song song `GET /api/groups/{groupId}/meetings/{meetingId}` và `GET /api/groups/{groupId}/meetings/{meetingId}/votes`.
    - Nếu `status === "VOTING"`:
      - Thành viên có `isInvited === true` thấy phần bình chọn (5.3), khởi tạo checkbox từ `mySelectedSlotIds`, gửi qua `POST .../votes` (khi lưu gọi lại `GET .../votes` để cập nhật tổng hợp).
      - Hiển thị bảng/ma trận kết quả và thẻ đề xuất theo `timeSlots[].isSuggested` kèm ghi chú đây chỉ là đề xuất (5.4).
      - Nếu người dùng là `creator` hoặc `LEADER` của nhóm: hiển thị khối chọn 1 khung giờ chính thức + ô nhập/chỉnh `externalLink` + nút `"Chốt lịch họp"`, gửi `POST .../confirm`, thành công cập nhật giao diện sang 5.5.
-   - Nếu `status === "CONFIRMED"`: hiển thị thông tin lịch chính thức (`confirmedStartTime`, `confirmedEndTime`), danh sách thành viên tham gia và liên kết họp bên ngoài (mở tab mới hoặc sao chép liên kết) như màn hình 5.5.
+   - Nếu `status === "CONFIRMED"`: hiển thị thông tin lịch chính thức (`confirmedStartTime`, `confirmedEndTime`), danh sách thành viên tham gia và liên kết họp bên ngoài (mở tab mới `rel="noopener noreferrer"` hoặc sao chép liên kết) như màn hình 5.5.
 
 ### Ngoài phạm vi Milestone 1 (không có trong hợp đồng này)
 
