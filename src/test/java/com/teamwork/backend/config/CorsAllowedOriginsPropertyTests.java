@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
  * hình thì origin mới được phép và origin mặc định không còn được phép.
  */
 @WebMvcTest(HealthController.class)
-@Import({ SecurityConfig.class, CorsConfig.class })
+@Import({ SecurityConfig.class, JwtConfig.class, CorsConfig.class })
 @TestPropertySource(properties = "app.cors.allowed-origins=https://teamwork.example.com, http://127.0.0.1:3000")
 class CorsAllowedOriginsPropertyTests {
 
