@@ -18,6 +18,30 @@ Backend for Online Team Collaboration System – Software Engineering Project
 
 Mặc định backend chỉ cho trang ở `http://localhost:3000` gọi API từ trình duyệt (CORS). Frontend chạy ở địa chỉ khác thì đặt biến môi trường `CORS_ALLOWED_ORIGINS` trước khi chạy backend, nhiều địa chỉ cách nhau bằng dấu phẩy, ví dụ `CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001`.
 
+## Biến môi trường và file `.env`
+
+Khóa dịch vụ và cấu hình riêng của từng máy không ghi vào code hay `application.properties`; file này chỉ tham chiếu tên biến, ví dụ `${R2_BUCKET:}`.
+
+- **Khi dev:** tạo file `.env` ở thư mục gốc dự án, mỗi dòng một biến dạng `TEN_BIEN=gia_tri`. Backend tự đọc file này khi khởi động, không cần đặt biến trong terminal. `.env` đã nằm trong `.gitignore`, không commit file này.
+- **Khi triển khai:** đặt biến môi trường của hệ thống. Biến hệ thống được ưu tiên hơn giá trị trong `.env`.
+
+Lưu ý khi viết `.env`:
+- Không bọc giá trị trong dấu nháy: `R2_BUCKET="abc"` sẽ lấy cả dấu nháy.
+- Dòng bắt đầu bằng `#` là chú thích. Dấu `\` phải viết thành `\\`.
+- Giá trị chỉ dùng ký tự ASCII (không dấu), vì backend đọc file theo bảng mã ISO-8859-1.
+- Backend tìm `.env` ở thư mục đang chạy: chạy `mvnw` từ thư mục gốc; chạy bằng IDE thì đặt thư mục làm việc (working directory) của cấu hình chạy là thư mục gốc.
+- Test cũng đọc `.env` nếu có, giống ứng dụng. Đổi `CORS_ALLOWED_ORIGINS` trong `.env` thì test CORS trên máy đó có thể không qua; CI không có `.env` nên không bị ảnh hưởng.
+
+| Biến | Bắt buộc | Dùng cho |
+|---|---|---|
+| `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` | Không, mặc định khớp `compose.yaml` | PostgreSQL |
+| `CORS_ALLOWED_ORIGINS` | Không, mặc định `http://localhost:3000` | Origin frontend được gọi API |
+| `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` | Chưa, cho tới khi làm tính năng tải tệp | Cloudflare R2 |
+| `AI_API_KEY`, `AI_MODEL` | Chưa, cho tới khi làm tính năng AI tóm tắt | Dịch vụ AI |
+| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Chưa, cho tới khi làm tính năng gửi email; `MAIL_PORT` nếu đặt phải từ 1 đến 65535 | Email (SMTP) |
+
+Biến bắt buộc mà thiếu, hoặc biến có giá trị sai, thì backend dừng ngay khi khởi động và ghi tên biến vào log; thông báo lỗi không chứa giá trị của khóa.
+
 ## Chạy test
 - Lệnh: `.\mvnw test` (Windows) hoặc `./mvnw test`.
 - **Cần Docker Desktop đang chạy.** Testcontainers tự bật một PostgreSQL 17 tạm cho mỗi lần chạy test và xóa nó khi xong, nên không cần `docker compose up`.
