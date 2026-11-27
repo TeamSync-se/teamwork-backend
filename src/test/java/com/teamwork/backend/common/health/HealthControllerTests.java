@@ -1,7 +1,12 @@
 package com.teamwork.backend.common.health;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.http.HttpHeaders.ALLOW;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.teamwork.backend.config.CorsConfig;
@@ -31,6 +36,16 @@ class HealthControllerTests {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(content().json("{\"status\":\"UP\"}", JsonCompareMode.STRICT));
+	}
+
+	/** Gọi sai phương thức thì nhận 405 (quy ước API mục 4), không bị Spring Security chặn thành 401. */
+	@Test
+	void wrongHttpMethodReturns405WithoutLogin() throws Exception {
+		this.mockMvc.perform(post("/api/health"))
+			.andExpect(status().isMethodNotAllowed())
+			.andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
+			.andExpect(jsonPath("$.code").value("METHOD_NOT_ALLOWED"))
+			.andExpect(header().string(ALLOW, containsString("GET")));
 	}
 
 }

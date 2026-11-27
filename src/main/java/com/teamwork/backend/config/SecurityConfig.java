@@ -2,7 +2,6 @@ package com.teamwork.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,12 +25,11 @@ import tools.jackson.databind.json.JsonMapper;
 public class SecurityConfig {
 
 	/**
-	 * API không cần đăng nhập. Mở {@code /api/auth/**} cho mọi phương thức, không chỉ POST: gọi sai phương thức
+	 * API không cần đăng nhập. Mở cho mọi phương thức, không chỉ phương thức API thật sự nhận: gọi sai phương thức
 	 * thì nhận 405 thay vì 401 (quy ước API mục 4).
 	 */
 	private static final RequestMatcher PUBLIC_ENDPOINTS = new OrRequestMatcher(
-			PathPatternRequestMatcher.pathPattern("/api/auth/**"),
-			PathPatternRequestMatcher.pathPattern(HttpMethod.GET, "/api/health"));
+			PathPatternRequestMatcher.pathPattern("/api/auth/**"), PathPatternRequestMatcher.pathPattern("/api/health"));
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http, JsonMapper jsonMapper) throws Exception {
