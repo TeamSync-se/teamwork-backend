@@ -12,11 +12,13 @@ Backend for Online Team Collaboration System – Software Engineering Project
 
 ## Chạy dự án
 1. Bật CSDL: `docker compose up -d`
-2. Đặt biến môi trường `JWT_SECRET`, là khóa ký token đăng nhập: một chuỗi ngẫu nhiên dài ít nhất 32 byte, mỗi người tự tạo trên máy mình và không commit. Thiếu biến này thì backend báo lỗi và không khởi động. Ví dụ tạo khóa ngẫu nhiên 48 byte:
-   - Windows (PowerShell): `$b = New-Object byte[] 48; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); $env:JWT_SECRET = [Convert]::ToBase64String($b)`
-   - macOS, Linux, Git Bash: `export JWT_SECRET=$(openssl rand -base64 48)`
+2. Đặt `JWT_SECRET`, là khóa ký token đăng nhập: một chuỗi ngẫu nhiên dài ít nhất 32 byte, mỗi người tự tạo trên máy mình và không commit. Thiếu biến này thì backend báo lỗi và không khởi động.
+   - Tạo khóa ngẫu nhiên 48 byte:
+     - Windows (PowerShell): `$b = New-Object byte[] 48; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); [Convert]::ToBase64String($b)`
+     - macOS, Linux, Git Bash: `openssl rand -base64 48`
+   - Ghi khóa vừa tạo vào file `.env` ở thư mục gốc dự án, một dòng dạng `JWT_SECRET=<khóa>`. Backend tự đọc file này khi khởi động; xem mục "Biến môi trường và file `.env`" bên dưới.
 
-   Biến chỉ có hiệu lực trong cửa sổ terminal vừa đặt; chạy bằng IDE thì đặt trong cấu hình chạy (Run Configuration). Đổi khóa thì mọi token đã phát hành hết hiệu lực, người dùng phải đăng nhập lại.
+   Đổi khóa thì mọi token đã phát hành hết hiệu lực, người dùng phải đăng nhập lại.
 3. Chạy backend: `.\mvnw spring-boot:run` (Windows) hoặc `./mvnw spring-boot:run`
 4. Backend chạy ở http://localhost:8080. Flyway tự tạo bảng khi khởi động.
 5. Kiểm tra: mở http://localhost:8080/api/health, thấy `{"status":"UP"}` là backend đã chạy.
@@ -41,6 +43,7 @@ Lưu ý khi viết `.env`:
 |---|---|---|
 | `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` | Không, mặc định khớp `compose.yaml` | PostgreSQL |
 | `CORS_ALLOWED_ORIGINS` | Không, mặc định `http://localhost:3000` | Origin frontend được gọi API |
+| `JWT_SECRET` | **Có**, ít nhất 32 byte | Khóa ký token đăng nhập (JWT) |
 | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` | Chưa, cho tới khi làm tính năng tải tệp | Cloudflare R2 |
 | `AI_API_KEY`, `AI_MODEL` | Chưa, cho tới khi làm tính năng AI tóm tắt | Dịch vụ AI |
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` | Chưa, cho tới khi làm tính năng gửi email; `MAIL_PORT` nếu đặt phải từ 1 đến 65535 | Email (SMTP) |
