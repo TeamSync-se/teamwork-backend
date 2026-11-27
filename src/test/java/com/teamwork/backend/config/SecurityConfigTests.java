@@ -27,6 +27,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -126,6 +128,31 @@ class SecurityConfigTests {
 		expectRejected(encode(this.jwtEncoder, now.minus(Duration.ofDays(1)), now.minusSeconds(5)));
 	}
 
+	/** Token không có {@code exp} thì không bao giờ hết hạn, nên phải bị từ chối dù chữ ký đúng. */
+	@Test
+	void tokenWithoutExpirationReturns401() throws Exception {
+		JwtClaimsSet claims = JwtClaimsSet.builder().subject(String.valueOf(USER_ID)).issuedAt(Instant.now()).build();
+
+		expectRejected(encode(this.jwtEncoder, claims));
+	}
+
+	/**
+	 * {@code sub} phải là id người dùng (số nguyên dương). Sai thì trả 401 ngay khi kiểm tra token, không để lỗi
+	 * 500 khi {@link CurrentUserId} đổi {@code sub} sang số.
+	 */
+	@ParameterizedTest(name = "sub = \"{0}\"")
+	@NullSource
+	@ValueSource(strings = { "invalid", "", "0", "-1", "1.5", "99999999999999999999" })
+	void tokenWithInvalidSubjectReturns401(String subject) throws Exception {
+		Instant now = Instant.now();
+		JwtClaimsSet.Builder claims = JwtClaimsSet.builder().issuedAt(now).expiresAt(now.plus(Duration.ofHours(1)));
+		if (subject != null) {
+			claims.subject(subject);
+		}
+
+		expectRejected(encode(this.jwtEncoder, claims.build()));
+	}
+
 	@Test
 	void accessDeniedReturns403InCommonFormat() throws Exception {
 		this.mockMvc.perform(get("/api/test/forbidden").header(AUTHORIZATION, bearer(validToken())))
@@ -181,11 +208,14 @@ class SecurityConfigTests {
 	}
 
 	private static String encode(JwtEncoder encoder, Instant issuedAt, Instant expiresAt) {
-		JwtClaimsSet claims = JwtClaimsSet.builder()
+		return encode(encoder, JwtClaimsSet.builder()
 			.subject(String.valueOf(USER_ID))
 			.issuedAt(issuedAt)
 			.expiresAt(expiresAt)
-			.build();
+			.build());
+	}
+
+	private static String encode(JwtEncoder encoder, JwtClaimsSet claims) {
 		return encoder.encode(JwtEncoderParameters.from(JwsHeader.with(MacAlgorithm.HS256).build(), claims))
 			.getTokenValue();
 	}
