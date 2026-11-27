@@ -115,6 +115,17 @@ class SecurityConfigTests {
 		expectRejected(encode(this.jwtEncoder, now.minus(Duration.ofDays(2)), now.minus(Duration.ofDays(1))));
 	}
 
+	/**
+	 * Token hết hạn đúng thời điểm {@code expiresAt}: mặc định Spring còn nhận token quá hạn dưới 60 giây, nên test
+	 * này chứng minh {@link JwtConfig} đã bỏ khoảng đó.
+	 */
+	@Test
+	void tokenExpiredAFewSecondsAgoReturns401() throws Exception {
+		Instant now = Instant.now();
+
+		expectRejected(encode(this.jwtEncoder, now.minus(Duration.ofDays(1)), now.minusSeconds(5)));
+	}
+
 	@Test
 	void accessDeniedReturns403InCommonFormat() throws Exception {
 		this.mockMvc.perform(get("/api/test/forbidden").header(AUTHORIZATION, bearer(validToken())))
