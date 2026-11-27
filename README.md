@@ -10,6 +10,22 @@ Backend for Online Team Collaboration System – Software Engineering Project
 - JDK 21
 - Docker Desktop
 
+## Cấu hình biến môi trường
+
+File `.env.example` liệt kê cấu hình DB, CORS, JWT và các dịch vụ ngoài (R2, AI, SMTP). Chuẩn bị cấu hình cá nhân:
+
+1. Copy file mẫu: `cp .env.example .env`
+2. Mở `.env` và điền giá trị thật (lấy từ kênh nội bộ nhóm).
+3. **Không commit file `.env`** — file này đã nằm trong `.gitignore`.
+
+Hiện backend đọc `DB_*` và `CORS_ALLOWED_ORIGINS` từ biến môi trường của tiến trình. Backend **chưa tự nạp `.env`**; cấu hình tự nạp file và ánh xạ các khóa JWT, R2, AI, SMTP thuộc issue #7. Chỉ sao chép file chưa làm các dịch vụ này hoạt động. Khi cần đổi cấu hình hiện tại, đặt biến môi trường trong terminal hoặc cấu hình chạy của IDE trước khi khởi động backend.
+
+Ví dụ PowerShell: `$env:CORS_ALLOWED_ORIGINS = 'http://localhost:3000,http://localhost:3001'`, rồi chạy `.\mvnw spring-boot:run`.
+
+Mẫu dùng Google AI Studio với `gemini-3.6-flash`, model thay thế `gemini-2.0-flash` theo [lịch ngừng hỗ trợ của Google](https://ai.google.dev/gemini-api/docs/deprecations). Khi cập nhật mẫu, người giữ khóa cần cập nhật `AI_MODEL` trong `.env` chia sẻ nội bộ và thống nhất với người làm issue #25; kiểm tra quyền sử dụng và hạn mức của tài khoản trước khi gọi dịch vụ.
+
+Để chạy backend với cấu hình DB mặc định, thực hiện cả bước bật PostgreSQL và bước chạy backend bên dưới.
+
 ## Chạy dự án
 1. Bật CSDL: `docker compose up -d`
 2. Chạy backend: `.\mvnw spring-boot:run` (Windows) hoặc `./mvnw spring-boot:run`
