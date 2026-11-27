@@ -26,14 +26,14 @@ import org.springframework.test.web.servlet.MockMvc;
  * khi có header {@code Access-Control-Allow-Origin} khớp với origin của trang.
  */
 @WebMvcTest(HealthController.class)
-@Import({ SecurityConfig.class, CorsConfig.class })
+@Import({ SecurityConfig.class, JwtConfig.class, CorsConfig.class })
 class CorsConfigTests {
 
 	private static final String FRONTEND_ORIGIN = "http://localhost:3000";
 
 	private static final String OTHER_ORIGIN = "http://evil.example.com";
 
-	/** Chưa có API nào cần đăng nhập; Spring Security từ chối trước khi tìm tới controller nên dùng được. */
+	/** Đường dẫn chưa có API; Spring Security từ chối trước khi tìm tới controller nên không cần controller thật. */
 	private static final String PROTECTED_API = "/api/groups";
 
 	@Autowired

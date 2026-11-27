@@ -12,9 +12,14 @@ Backend for Online Team Collaboration System – Software Engineering Project
 
 ## Chạy dự án
 1. Bật CSDL: `docker compose up -d`
-2. Chạy backend: `.\mvnw spring-boot:run` (Windows) hoặc `./mvnw spring-boot:run`
-3. Backend chạy ở http://localhost:8080. Flyway tự tạo bảng khi khởi động.
-4. Kiểm tra: mở http://localhost:8080/api/health, thấy `{"status":"UP"}` là backend đã chạy.
+2. Đặt biến môi trường `JWT_SECRET`, là khóa ký token đăng nhập: một chuỗi ngẫu nhiên dài ít nhất 32 byte, mỗi người tự tạo trên máy mình và không commit. Thiếu biến này thì backend báo lỗi và không khởi động. Ví dụ tạo khóa ngẫu nhiên 48 byte:
+   - Windows (PowerShell): `$b = New-Object byte[] 48; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); $env:JWT_SECRET = [Convert]::ToBase64String($b)`
+   - macOS, Linux, Git Bash: `export JWT_SECRET=$(openssl rand -base64 48)`
+
+   Biến chỉ có hiệu lực trong cửa sổ terminal vừa đặt; chạy bằng IDE thì đặt trong cấu hình chạy (Run Configuration). Đổi khóa thì mọi token đã phát hành hết hiệu lực, người dùng phải đăng nhập lại.
+3. Chạy backend: `.\mvnw spring-boot:run` (Windows) hoặc `./mvnw spring-boot:run`
+4. Backend chạy ở http://localhost:8080. Flyway tự tạo bảng khi khởi động.
+5. Kiểm tra: mở http://localhost:8080/api/health, thấy `{"status":"UP"}` là backend đã chạy.
 
 Mặc định backend chỉ cho trang ở `http://localhost:3000` gọi API từ trình duyệt (CORS). Frontend chạy ở địa chỉ khác thì đặt biến môi trường `CORS_ALLOWED_ORIGINS` trước khi chạy backend, nhiều địa chỉ cách nhau bằng dấu phẩy, ví dụ `CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001`.
 
